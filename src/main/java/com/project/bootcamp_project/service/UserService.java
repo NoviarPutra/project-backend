@@ -4,8 +4,8 @@ import com.project.bootcamp_project.core.IService;
 import com.project.bootcamp_project.entity.User;
 import com.project.bootcamp_project.handler.DefaultResponse;
 import com.project.bootcamp_project.repository.UserRepository;
+import com.project.bootcamp_project.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,14 +17,15 @@ import java.util.UUID;
 @Service
 public class UserService implements IService<User> {
 
-    private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
     public UserService() {
-        this.modelMapper = new ModelMapper();
+        this.jwtUtil = new JwtUtil();
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
@@ -61,6 +62,25 @@ public class UserService implements IService<User> {
     @Override
     public ResponseEntity<Object> findAll(HttpServletRequest request) {
         return null;
+    }
+
+    public ResponseEntity<Object> login(String email, String password, HttpServletRequest request) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return DefaultResponse.notFound("FV001001002", request);
+        }
+
+        User user = userOptional.get();
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            return DefaultResponse.invalidCredential("FV001001003", request);
+        }
+
+        try {
+            String token = jwtUtil.generateToken(user.getEmail());
+            return DefaultResponse.successWithData(token, request);
+        } catch (Exception e) {
+            return DefaultResponse.failed("FE001001002", request);
+        }
     }
 
 
