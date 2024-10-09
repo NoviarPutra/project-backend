@@ -7,22 +7,26 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "job_position")
+public class JobPosition {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false, unique = true, columnDefinition = "CHAR(36)")
     private String id;
 
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
+    @ManyToOne
+    @JoinColumn(name = "department_id", nullable = false)
+    private Department department;
 
-    @Column(name = "password", nullable = false)
-    private String password;
+    @Column(name = "title", nullable = false)
+    private String title;
+
+    @Column(name = "description", nullable = false)
+    private String description;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @JoinColumn(name = "created_by", nullable = false)
+    private User createdBy;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -38,28 +42,36 @@ public class User {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
-    public String getPassword() {
-        return password;
+    public String getTitle() {
+        return title;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public Role getRole() {
-        return role;
+    public String getDescription() {
+        return description;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
     }
 
     public LocalDateTime getCreatedAt() {
