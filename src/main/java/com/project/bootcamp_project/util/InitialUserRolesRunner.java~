@@ -67,7 +67,7 @@ public class InitialUserRolesRunner implements CommandLineRunner {
                 user.setPassword(passwordEncoder.encode("admin"));
                 user.setRole(adminRole);
                 userRepository.save(user);
-                System.out.println("Initial user and roles created");
+        System.out.println("Initial user and roles created");
             } catch (Exception e) {
                 System.out.println("Error saving user -> " + e.getMessage());
             }
