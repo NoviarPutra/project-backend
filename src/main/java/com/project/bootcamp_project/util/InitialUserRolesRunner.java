@@ -28,7 +28,7 @@ public class InitialUserRolesRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (roleRepository.count() != 0) {
-            System.out.println("Initial user and roles already exist");
+            Console.Info("Initial user and roles already exist");
             return;
         }
         Role admin = new Role();
@@ -53,7 +53,7 @@ public class InitialUserRolesRunner implements CommandLineRunner {
             List<Role> roles = Arrays.asList(admin, manager, hr, recruiter, interviewer, candidate);
             roleRepository.saveAll(roles);
         } catch (Exception e) {
-            System.out.println("Error saving roles -> " + e.getMessage());
+            Console.Error("Error saving roles -> " + e.getMessage());
         }
 
         Role adminRole = roleRepository.findByName("ADMIN").isPresent() ? roleRepository.findByName("ADMIN").get() : null;
@@ -67,9 +67,9 @@ public class InitialUserRolesRunner implements CommandLineRunner {
                 user.setPassword(passwordEncoder.encode("admin"));
                 user.setRole(adminRole);
                 userRepository.save(user);
-                System.out.println("Initial user and roles created");
+                Console.Info("Initial user and roles created");
             } catch (Exception e) {
-                System.out.println("Error saving user -> " + e.getMessage());
+                Console.Error("Error saving user -> " + e.getMessage());
             }
         }
     }
