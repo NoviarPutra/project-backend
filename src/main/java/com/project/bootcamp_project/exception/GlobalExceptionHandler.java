@@ -16,7 +16,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> methodArgumentNotValidException(MethodArgumentNotValidException exception,
-            HttpServletRequest request) {
+                                                                  HttpServletRequest request) {
         Map<String, String> errors = new HashMap<String, String>();
         exception.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
@@ -27,6 +27,18 @@ public class GlobalExceptionHandler {
         return ApiResponseHandler.buildResponse(
                 "DATA TIDAK VALID",
                 HttpStatus.BAD_REQUEST,
+                errors,
+                request);
+    }
+
+    @ExceptionHandler(RoleNotFoundException.class)
+    public ResponseEntity<Object> handleRoleNotFoundException(RoleNotFoundException ex, HttpServletRequest request) {
+        Map<String, Object> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+
+        return ApiResponseHandler.buildResponse(
+                "ROLE TIDAK DITEMUKAN",
+                HttpStatus.NOT_FOUND,
                 errors,
                 request);
     }

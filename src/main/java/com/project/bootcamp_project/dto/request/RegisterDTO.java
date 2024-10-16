@@ -16,25 +16,34 @@ public class RegisterDTO {
     @NotNull
     @NotBlank
     @NotEmpty
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-            message = "password harus terdiri dari huruf kecil, huruf kapital, angka, dan simbol")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "password harus terdiri dari huruf kecil, huruf kapital, angka, dan simbol")
     private String password;
+
+    private String Role;
+
+    public String getRole() {
+        return Role;
+    }
+
+    public void setRole(String role) {
+        Role = role;
+    }
 
     public @NotNull @NotBlank @NotEmpty @Pattern(regexp = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", message = "email tidak sesuai") String getEmail() {
         return email;
     }
 
-    public void setEmail(@NotNull @NotBlank @NotEmpty @Pattern(regexp = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", message = "email tidak sesuai") String email) {
+    public void setEmail(
+            @NotNull @NotBlank @NotEmpty @Pattern(regexp = "^[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", message = "email tidak sesuai") String email) {
         this.email = email;
     }
 
-    public @NotNull @NotBlank @NotEmpty @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-            message = "password harus terdiri dari huruf kecil, huruf kapital, angka, dan simbol") String getPassword() {
+    public @NotNull @NotBlank @NotEmpty @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "password harus terdiri dari huruf kecil, huruf kapital, angka, dan simbol") String getPassword() {
         return password;
     }
 
-    public void setPassword(@NotNull @NotBlank @NotEmpty @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-            message = "password harus terdiri dari huruf kecil, huruf kapital, angka, dan simbol") String password) {
+    public void setPassword(
+            @NotNull @NotBlank @NotEmpty @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "password harus terdiri dari huruf kecil, huruf kapital, angka, dan simbol") String password) {
         this.password = password;
     }
 }

@@ -2,9 +2,11 @@ package com.project.bootcamp_project.service;
 
 import com.project.bootcamp_project.util.Console;
 import com.project.bootcamp_project.core.IService;
+import com.project.bootcamp_project.entity.Role;
 import com.project.bootcamp_project.entity.User;
 import com.project.bootcamp_project.handler.DefaultResponse;
 import com.project.bootcamp_project.repository.UserRepository;
+import com.project.bootcamp_project.repository.RoleRepository;
 import com.project.bootcamp_project.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class UserService implements IService<User> {
     private UserRepository userRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     public UserService() {
         this.jwtUtil = new JwtUtil();
         this.passwordEncoder = new BCryptPasswordEncoder();
@@ -32,15 +37,29 @@ public class UserService implements IService<User> {
 
     @Override
     public ResponseEntity<Object> save(User user, HttpServletRequest request) {
+        Console.Info(user.toString());
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
+            Console.Error("User already exists");
             return DefaultResponse.alreadyExists(request);
         }
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+            if (user.getRole() == null) {
+                Optional<Role> defaultRole = roleRepository.findByName("CANDIDATE");
+                if (defaultRole.isPresent()) {
+                    user.setRole(defaultRole.get());
+                } else {
+                    Role candidate = new Role();
+                    candidate.setName("CANDIDATE");
+                    user.setRole(roleRepository.save(candidate));
+                }
+            }
             userRepository.save(user);
+            Console.Log("User saved successfully");
             return DefaultResponse.saved(request);
         } catch (Exception e) {
+            Console.Error("Failed to save user");
             return DefaultResponse.failedSaved(request);
         }
     }
