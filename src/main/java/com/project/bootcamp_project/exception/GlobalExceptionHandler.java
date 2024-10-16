@@ -15,7 +15,8 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> methodArgumentNotValidException(MethodArgumentNotValidException exception, HttpServletRequest request) {
+    public ResponseEntity<Object> methodArgumentNotValidException(MethodArgumentNotValidException exception,
+            HttpServletRequest request) {
         Map<String, String> errors = new HashMap<String, String>();
         exception.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
@@ -27,8 +28,6 @@ public class GlobalExceptionHandler {
                 "DATA TIDAK VALID",
                 HttpStatus.BAD_REQUEST,
                 errors,
-                "EX01001",
-                request
-        );
+                request);
     }
 }

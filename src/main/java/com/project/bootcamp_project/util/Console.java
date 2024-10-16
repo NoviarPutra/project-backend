@@ -6,6 +6,7 @@ public class Console {
     private static final String MODE = System.getenv("MODE").toUpperCase();
     private static final boolean IS_DEV = Objects.equals(MODE, "DEV");
     private static final String RESET = "\033[0m";
+    private static final String RED = "\033[0;31m";
     private static final String GREEN = "\033[0;32m";
     private static final String BLUE = "\033[0;34m";
 
@@ -23,7 +24,7 @@ public class Console {
 
     public static void Error(String message) {
         if (IS_DEV) {
-            System.err.println(message);
+            System.out.println(RED + message + RESET);
         }
     }
 }

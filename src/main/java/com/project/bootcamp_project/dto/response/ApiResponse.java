@@ -9,9 +9,6 @@ public class ApiResponse {
     private String status;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private String errorCode;
-
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String path;
 
     private String message;
@@ -19,9 +16,8 @@ public class ApiResponse {
 
     private Object data;
 
-    public ApiResponse(String status, String errorCode, String path, String message, Object data) {
+    public ApiResponse(String status, String path, String message, Object data) {
         this.status = status;
-        this.errorCode = errorCode;
         this.path = path;
         this.message = message;
         this.timestamp = new Date();
@@ -34,14 +30,6 @@ public class ApiResponse {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
     }
 
     public String getPath() {

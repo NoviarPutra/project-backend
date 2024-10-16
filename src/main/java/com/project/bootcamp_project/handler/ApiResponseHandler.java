@@ -8,7 +8,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 
 public class ApiResponseHandler {
-    public static ResponseEntity<Object> buildResponse(String message, HttpStatus status, Object data, Object errorCode, HttpServletRequest request) {
+    public static ResponseEntity<Object> buildResponse(String message, HttpStatus status, Object data,
+            HttpServletRequest request) {
         String statusText = status.isError() ? "Error" : "Success";
         String path = null;
         if (status.is4xxClientError() || status.is5xxServerError()) {
@@ -17,11 +18,9 @@ public class ApiResponseHandler {
         Object responseData = (data == null) ? new HashMap<>() : data;
         ApiResponse response = new ApiResponse(
                 statusText,
-                errorCode != null ? errorCode.toString() : "",
                 path,
                 message,
-                responseData
-        );
+                responseData);
         return new ResponseEntity<>(response, status);
     }
 }
