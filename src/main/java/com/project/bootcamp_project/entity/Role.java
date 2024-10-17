@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles")
@@ -18,11 +19,20 @@ public class Role {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
+    @ManyToMany
+    @JoinTable(
+            name = "roles_access_permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "access_permission_id")
+    )
+    private Set<AccessPermission> accessPermissions;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
 
     public String getId() {
         return id;
@@ -40,6 +50,14 @@ public class Role {
         this.name = name;
     }
 
+    public Set<AccessPermission> getAccessPermissions() {
+        return accessPermissions;
+    }
+
+    public void setAccessPermissions(Set<AccessPermission> accessPermissions) {
+        this.accessPermissions = accessPermissions;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -54,5 +72,15 @@ public class Role {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

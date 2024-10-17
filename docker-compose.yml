@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  app:
+    image: bootcamp-project
+    environment:
+      - DB_HOST=172.18.29.59
+      - DB_NAME=springboot_db
+      - DB_PASSWORD=admin
+      - DB_PORT=3306
+      - DB_USER=root
+      - MODE=dev
+    ports:
+      - "8001:8001"

@@ -1,4 +1,4 @@
-package com.project.bootcamp_project.util;
+package com.project.bootcamp_project.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -15,10 +15,10 @@ import java.util.function.Function;
 
 
 @Component
-public class JwtUtil {
+public class JwtService {
     private final Key key;
 
-    public JwtUtil() {
+    public JwtService() {
         String SECRET_KEY = "trcxey2mNEMO3xXHRPWAkBOb0zA5QnoZv1O/8zmIaFU=";
         byte[] secretBytes = Base64.getDecoder().decode(SECRET_KEY);
         this.key = new SecretKeySpec(secretBytes, SignatureAlgorithm.HS256.getJcaName());
@@ -38,6 +38,7 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
+
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
@@ -53,7 +54,8 @@ public class JwtUtil {
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours expiration
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+//                .setExpiration(new Date(System.currentTimeMillis() + 20000)) // for testing only 20 seconds
                 .signWith(key, SignatureAlgorithm.HS256).compact();
     }
 

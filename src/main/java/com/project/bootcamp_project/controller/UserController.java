@@ -1,46 +1,33 @@
 package com.project.bootcamp_project.controller;
 
-import com.project.bootcamp_project.dto.request.RegisterDTO;
-import com.project.bootcamp_project.entity.Role;
-import com.project.bootcamp_project.entity.User;
-import com.project.bootcamp_project.exception.RoleNotFoundException;
-import com.project.bootcamp_project.repository.RoleRepository;
 import com.project.bootcamp_project.service.UserService;
+import com.project.bootcamp_project.util.Console;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-
     @Autowired
     UserService userService;
 
-    @Autowired
-    RoleRepository roleRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    @GetMapping
+    public ResponseEntity<Object> findByEmail(
+            @NotBlank(message = "email tidak boleh kosong")
+            @Email(message = "email tidak sesuai")
+            @RequestParam String email,
+            HttpServletRequest request) {
 
-    @PostMapping
-    public ResponseEntity<Object> save(@Valid @RequestBody RegisterDTO registerDTO, HttpServletRequest request) {
-        if (registerDTO.getRole() == null) {
-            User user = modelMapper.map(registerDTO, User.class);
-            return userService.save(user, request);
-        } else {
-            Role role = roleRepository.findByName(registerDTO.getRole().toUpperCase())
-                    .orElseThrow(() -> new RoleNotFoundException("Role " + registerDTO.getRole() + " not found"));
-            User user = modelMapper.map(registerDTO, User.class);
-            user.setRole(role);
-            return userService.save(user, request);
-        }
+        Console.Log(email);
+        return userService.findUserByEmail(email, request);
     }
+
 }
