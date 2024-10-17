@@ -1,13 +1,14 @@
 package com.project.bootcamp_project.service;
 
-import com.project.bootcamp_project.util.Console;
 import com.project.bootcamp_project.core.IService;
+import com.project.bootcamp_project.dto.response.UserResponseDTO;
+import com.project.bootcamp_project.entity.AccessPermission;
 import com.project.bootcamp_project.entity.Role;
 import com.project.bootcamp_project.entity.User;
 import com.project.bootcamp_project.handler.DefaultResponse;
-import com.project.bootcamp_project.repository.UserRepository;
 import com.project.bootcamp_project.repository.RoleRepository;
-import com.project.bootcamp_project.util.JwtUtil;
+import com.project.bootcamp_project.repository.UserRepository;
+import com.project.bootcamp_project.util.Console;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +16,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IService<User> {
 
     private final BCryptPasswordEncoder passwordEncoder;
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
 
     @Autowired
     private UserRepository userRepository;
@@ -31,7 +34,7 @@ public class UserService implements IService<User> {
 
     @Autowired
     public UserService() {
-        this.jwtUtil = new JwtUtil();
+        this.jwtService = new JwtService();
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
@@ -84,6 +87,27 @@ public class UserService implements IService<User> {
         return null;
     }
 
+    public ResponseEntity<Object> findUserByEmail(String email, HttpServletRequest request) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            Console.Error("User not found");
+            return DefaultResponse.notFound(request);
+        }
+        User user = userOptional.get();
+        Set<String> permissions = user.getRole().getAccessPermissions().stream()
+                .map(AccessPermission::getName)
+                .collect(Collectors.toSet());
+        UserResponseDTO userResponse = new UserResponseDTO(
+                user.getId(),
+                user.getEmail(),
+                user.getRole().getName(),
+                permissions
+        );
+
+        Console.Log("Email " + email + " found successfully");
+        return DefaultResponse.successWithData(userResponse, request);
+    }
+
     public ResponseEntity<Object> login(String email, String password, HttpServletRequest request) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
@@ -98,7 +122,7 @@ public class UserService implements IService<User> {
         }
 
         try {
-            String token = jwtUtil.generateToken(user.getEmail());
+            String token = jwtService.generateToken(user.getEmail());
             Console.Log("Successfully logged in");
             return DefaultResponse.successWithData(token, request);
         } catch (Exception e) {

@@ -1,4 +1,4 @@
-package com.project.bootcamp_project.security;
+package com.project.bootcamp_project.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
