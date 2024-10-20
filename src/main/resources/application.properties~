@@ -1,6 +1,9 @@
 spring.application.name=bootcamp-project
 app.encryption.secret.key=${APP_ENCRYPTION_SECRET_KEY}
 app.jwt.secret.key=${APP_JWT_SECRET_KEY}
+app.refresh.token.secret.key=${APP_REFRESH_TOKEN_SECRET_KEY}
+#app.jwt.secret.key=ABSOLUTE_SECRET
+#app.refresh.token.secret.key=ABSOLUTE_SECRET_REFRESH_TOKEN
 spring.datasource.url=jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?allowPublicKeyRetrieval=true
 spring.datasource.username=${DB_USER}
 spring.datasource.password=${DB_PASSWORD}
