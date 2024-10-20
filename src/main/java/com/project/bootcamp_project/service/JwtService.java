@@ -16,12 +16,12 @@ import java.util.function.Function;
 
 @Component
 public class JwtService {
-    private final Key key;
+    private final Key secretKey;
 
     public JwtService() {
-        String SECRET_KEY = "trcxey2mNEMO3xXHRPWAkBOb0zA5QnoZv1O/8zmIaFU=";
-        byte[] secretBytes = Base64.getDecoder().decode(SECRET_KEY);
-        this.key = new SecretKeySpec(secretBytes, SignatureAlgorithm.HS256.getJcaName());
+        String JWT_SECRET_KEY = System.getenv("APP_JWT_SECRET_KEY");
+        byte[] accessSecretBytes = Base64.getDecoder().decode(JWT_SECRET_KEY);
+        this.secretKey = new SecretKeySpec(accessSecretBytes, SignatureAlgorithm.HS256.getJcaName());
     }
 
     public String extractEmail(String token) {
@@ -39,22 +39,28 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
 
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+
     }
 
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String email) {
+    public String generateAccessToken(String email) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, email);
+        return createToken(claims, email, secretKey, 5 * 60 * 1000);
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    public String generateRefreshToken(String email) {
+        Map<String, Object> claims = new HashMap<>();
+        return createToken(claims, email, secretKey, 24 * 60 * 60 * 1000);
+    }
+
+    private String createToken(Map<String, Object> claims, String subject, Key key, long expiresIn) {
         return Jwts.builder().setClaims(claims).setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+                .setExpiration(new Date(System.currentTimeMillis() + expiresIn))
 //                .setExpiration(new Date(System.currentTimeMillis() + 20000)) // for testing only 20 seconds
                 .signWith(key, SignatureAlgorithm.HS256).compact();
     }

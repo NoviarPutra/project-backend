@@ -9,15 +9,15 @@ import com.project.bootcamp_project.handler.DefaultResponse;
 import com.project.bootcamp_project.repository.RoleRepository;
 import com.project.bootcamp_project.repository.UserRepository;
 import com.project.bootcamp_project.util.Console;
+import com.project.bootcamp_project.util.EncryptionUtil;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -122,12 +122,65 @@ public class UserService implements IService<User> {
         }
 
         try {
-            String token = jwtService.generateToken(user.getEmail());
-            Console.Log("Successfully logged in");
-            return DefaultResponse.successWithData(token, request);
+            String accessToken = jwtService.generateAccessToken(user.getEmail());
+            String refreshToken = jwtService.generateRefreshToken(user.getEmail());
+            String encryptedAccessToken = EncryptionUtil.encrypt(accessToken);
+            String encryptedRefreshToken = EncryptionUtil.encrypt(refreshToken);
+
+
+//            Map<String, String> tokens = Map.of(
+//                    "access_token", encryptedAccessToken,
+//                    "refresh_token", encryptedRefreshToken
+//            );
+            Map<String, String> tokens = new HashMap<>();
+            return DefaultResponse.successWithDataAndHeaders(
+                    tokens,
+                    request,
+                    encryptedAccessToken,
+                    encryptedRefreshToken
+            );
         } catch (Exception e) {
-            Console.Error("Failed to login");
+            Console.Error("Failed to login : " + e.getMessage());
             return DefaultResponse.failed(request);
+        }
+    }
+
+    public ResponseEntity<Object> refreshToken(HttpServletRequest request) {
+        try {
+            String refreshToken = null;
+
+            if (request.getCookies() != null) {
+                for (Cookie cookie : request.getCookies()) {
+                    if ("refresh_token".equals(cookie.getName())) {
+                        refreshToken = cookie.getValue();
+                        break;
+                    }
+                }
+            }
+
+            if (refreshToken == null) {
+                Console.Error("No refresh token found in cookies");
+                return DefaultResponse.invalidCredential(request);
+            }
+
+            String decryptedRefreshToken = EncryptionUtil.decrypt(refreshToken);
+
+
+            String email = jwtService.extractEmail(decryptedRefreshToken);
+
+            String newAccessToken = jwtService.generateAccessToken(email);
+            String encryptedAccessToken = EncryptionUtil.encrypt(newAccessToken);
+
+            return DefaultResponse.successWithDataAndHeaders(
+//                    Map.of("access_token", encryptedAccessToken),
+                    new HashMap<>(),
+                    request,
+                    encryptedAccessToken,
+                    refreshToken
+            );
+        } catch (Exception e) {
+            Console.Error("Failed to refresh token: " + e.getMessage());
+            return DefaultResponse.invalidRefreshToken(request);
         }
     }
 
