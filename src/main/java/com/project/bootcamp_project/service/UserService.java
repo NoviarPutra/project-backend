@@ -128,11 +128,11 @@ public class UserService implements IService<User> {
             String encryptedRefreshToken = EncryptionUtil.encrypt(refreshToken);
 
 
-//            Map<String, String> tokens = Map.of(
-//                    "access_token", encryptedAccessToken,
+            Map<String, String> tokens = Map.of(
+                    "access_token", encryptedAccessToken
 //                    "refresh_token", encryptedRefreshToken
-//            );
-            Map<String, String> tokens = new HashMap<>();
+            );
+//            Map<String, String> tokens = new HashMap<>();
             return DefaultResponse.successWithDataAndHeaders(
                     tokens,
                     request,
@@ -159,7 +159,7 @@ public class UserService implements IService<User> {
             }
 
             if (refreshToken == null) {
-                Console.Error("No refresh token found in cookies");
+                Console.Error("Tidak ada refresh token");
                 return DefaultResponse.invalidCredential(request);
             }
 
@@ -172,8 +172,8 @@ public class UserService implements IService<User> {
             String encryptedAccessToken = EncryptionUtil.encrypt(newAccessToken);
 
             return DefaultResponse.successWithDataAndHeaders(
-//                    Map.of("access_token", encryptedAccessToken),
-                    new HashMap<>(),
+//                    new HashMap<>(),
+                    Map.of("access_token", encryptedAccessToken),
                     request,
                     encryptedAccessToken,
                     refreshToken
@@ -181,6 +181,19 @@ public class UserService implements IService<User> {
         } catch (Exception e) {
             Console.Error("Failed to refresh token: " + e.getMessage());
             return DefaultResponse.invalidRefreshToken(request);
+        }
+    }
+
+    public ResponseEntity<Object> logout(HttpServletRequest request) {
+        try {
+            return DefaultResponse.successWithDataAndHeadersForLogout(
+                    new HashMap<>(),
+                    request
+            );
+
+        } catch (Exception e) {
+            Console.Error("Failed to logout: " + e.getMessage());
+            return DefaultResponse.failed(request);
         }
     }
 

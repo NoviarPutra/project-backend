@@ -27,7 +27,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         ApiResponse apiResponse = new ApiResponse(
                 "Error",
                 null,
-                "AKSES DITOLAK KARENA TOKEN TIDAK VALID / SESI KEDALUWARSA",
+                "AKSES DITOLAK KARENA TOKEN TIDAK VALID",
                 new HashMap<>()
         );
         response.getOutputStream().println(mapper.writeValueAsString(apiResponse));

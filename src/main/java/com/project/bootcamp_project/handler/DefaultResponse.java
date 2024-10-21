@@ -10,15 +10,8 @@ import java.time.Duration;
 
 public class DefaultResponse {
 
-    private static HttpHeaders addHeadersWithCookies(String accessToken, String refreshToken) {
+    private static HttpHeaders addHeadersWithCookies(String refreshToken) {
         HttpHeaders headers = new HttpHeaders();
-
-        ResponseCookie accessCookie = ResponseCookie.from("access_token", accessToken)
-                .httpOnly(true)
-                .secure(true)
-                .path("/")
-                .maxAge(Duration.ofMinutes(5))
-                .build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refresh_token", refreshToken)
                 .httpOnly(true)
@@ -27,14 +20,40 @@ public class DefaultResponse {
                 .maxAge(Duration.ofDays(1))
                 .build();
 
-        headers.add(HttpHeaders.SET_COOKIE, accessCookie.toString());
         headers.add(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
         return headers;
     }
 
+    private static HttpHeaders addHeadersWithRemovedCookies() {
+        HttpHeaders headers = new HttpHeaders();
+
+        ResponseCookie removeRefreshCookie = ResponseCookie.from("refresh_token", "")
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        headers.add(HttpHeaders.SET_COOKIE, removeRefreshCookie.toString());
+
+        return headers;
+    }
+
+    public static ResponseEntity<Object> successWithDataAndHeadersForLogout(Object data, HttpServletRequest request) {
+        HttpHeaders headers = addHeadersWithRemovedCookies();
+
+        return ApiResponseHandler.buildResponseWithHeaders(
+                "Logout successful",
+                HttpStatus.OK,
+                data,
+                headers,
+                request
+        );
+    }
+
     public static ResponseEntity<Object> successWithDataAndHeaders(Object data, HttpServletRequest request, String accessToken, String refreshToken) {
-        HttpHeaders headers = addHeadersWithCookies(accessToken, refreshToken);
+        HttpHeaders headers = addHeadersWithCookies(refreshToken);
 
         return ApiResponseHandler.buildResponseWithHeaders("OPERASI BERHASIL",
                 HttpStatus.OK,
@@ -50,6 +69,7 @@ public class DefaultResponse {
                 request);
 
     }
+
 
     public static ResponseEntity<Object> failedSaved(HttpServletRequest request) {
         return ApiResponseHandler.buildResponse("DATA GAGAL DISIMPAN",
