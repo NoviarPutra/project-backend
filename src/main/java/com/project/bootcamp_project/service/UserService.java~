@@ -160,7 +160,7 @@ public class UserService implements IService<User> {
 
             if (refreshToken == null) {
                 Console.Error("Tidak ada refresh token");
-                return DefaultResponse.invalidRefreshTokenNotPresent(request);
+                return DefaultResponse.invalidCredential(request);
             }
 
             String decryptedRefreshToken = EncryptionUtil.decrypt(refreshToken);

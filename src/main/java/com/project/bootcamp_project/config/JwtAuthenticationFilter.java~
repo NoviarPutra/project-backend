@@ -25,8 +25,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
-        Console.Info(authorizationHeader);
-
+        Console.Info("Authorization header: " + authorizationHeader);
+        
 
         String email = null;
         String jwt = null;
@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //            jwt = authorizationHeader.substring(7);
             try {
                 jwt = EncryptionUtil.decrypt(authorizationHeader.substring(7));
-            email = jwtService.extractEmail(jwt);
+                email = jwtService.extractEmail(jwt);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
