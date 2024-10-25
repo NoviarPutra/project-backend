@@ -27,7 +27,6 @@ public class FilterChainConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/register", "/api/auth/**").permitAll()
                         .requestMatchers("/api/users/**").authenticated()

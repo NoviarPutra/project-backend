@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 
-import java.time.Duration;
 
 public class DefaultResponse {
 
@@ -17,7 +16,8 @@ public class DefaultResponse {
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
-                .maxAge(Duration.ofDays(1))
+                .maxAge(60 * 60 * 24 * 7)
+                .sameSite("None")
                 .build();
 
         headers.add(HttpHeaders.SET_COOKIE, refreshCookie.toString());
@@ -106,6 +106,20 @@ public class DefaultResponse {
                 request);
     }
 
+    public static ResponseEntity<Object> foundWithPagination(Object data,
+                                                             HttpServletRequest request,
+                                                             int currentPage,
+                                                             int totalItems,
+                                                             int totalPages) {
+        return ApiResponseHandler.buildResponseWithPagination("DATA BERHASIL DITEMUKAN",
+                HttpStatus.OK,
+                data,
+                currentPage,
+                totalItems,
+                totalPages,
+                request);
+    }
+
     public static ResponseEntity<Object> notFound(HttpServletRequest request) {
         return ApiResponseHandler.buildResponse("DATA TIDAK DITEMUKAN",
                 HttpStatus.NOT_FOUND,
@@ -127,9 +141,16 @@ public class DefaultResponse {
                 request);
     }
 
+    public static ResponseEntity<Object> invalidRefreshTokenNotPresent(HttpServletRequest request) {
+        return ApiResponseHandler.buildResponse("REFRESH TOKEN TIDAK ADA",
+                HttpStatus.BAD_REQUEST,
+                null,
+                request);
+    }
+
     public static ResponseEntity<Object> invalidRefreshToken(HttpServletRequest request) {
         return ApiResponseHandler.buildResponse("REFRESH TOKEN TIDAK VALID SILAHKAN LOGIN ULANG",
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.FORBIDDEN,
                 null,
                 request);
     }

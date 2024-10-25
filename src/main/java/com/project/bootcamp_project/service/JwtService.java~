@@ -49,12 +49,12 @@ public class JwtService {
 
     public String generateAccessToken(String email) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, email, secretKey, 3 * 60 * 1000);
+        return createToken(claims, email, secretKey,  60 * 1000);
     }
 
     public String generateRefreshToken(String email) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, email, secretKey, 7 * 24 * 60 * 60 * 1000);
+        return createToken(claims, email, secretKey, 2 * 60 * 1000);
     }
 
     private String createToken(Map<String, Object> claims, String subject, Key key, long expiresIn) {

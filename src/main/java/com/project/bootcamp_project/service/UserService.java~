@@ -206,7 +206,7 @@ public class UserService implements IService<User> {
         );
 
 //        List<User> users = userRepository.findAll(specification);
-        Page<User> users = userRepository.findAll(specification, pageable);
+        Page<User> users = userRepository.findAllPagination(specification, pageable);
         if (users.isEmpty()) {
             Console.Error("User not found");
             return DefaultResponse.notFound(request);
