@@ -205,12 +205,7 @@ public class UserService implements IService<User> {
                 createdAtEnd
         );
 
-//        List<User> users = userRepository.findAll(specification);
         Page<User> users = userRepository.findAll(specification, pageable);
-        if (users.isEmpty()) {
-            Console.Error("User not found");
-            return DefaultResponse.notFound(request);
-        }
         List<UserResponseDTO> res = users.stream()
                 .map(user -> new UserResponseDTO(
                         user.getId(),
