@@ -8,15 +8,20 @@ import com.project.bootcamp_project.entity.User;
 import com.project.bootcamp_project.handler.DefaultResponse;
 import com.project.bootcamp_project.repository.RoleRepository;
 import com.project.bootcamp_project.repository.UserRepository;
+import com.project.bootcamp_project.specification.UserSpecification;
 import com.project.bootcamp_project.util.Console;
 import com.project.bootcamp_project.util.EncryptionUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -160,7 +165,7 @@ public class UserService implements IService<User> {
 
             if (refreshToken == null) {
                 Console.Error("Tidak ada refresh token");
-                return DefaultResponse.invalidCredential(request);
+                return DefaultResponse.invalidRefreshTokenNotPresent(request);
             }
 
             String decryptedRefreshToken = EncryptionUtil.decrypt(refreshToken);
@@ -183,6 +188,51 @@ public class UserService implements IService<User> {
             return DefaultResponse.invalidRefreshToken(request);
         }
     }
+
+    public ResponseEntity<Object> searchUser(String email,
+                                             String roleName,
+                                             String id,
+                                             LocalDateTime createdAtStart,
+                                             LocalDateTime createdAtEnd,
+                                             HttpServletRequest request,
+                                             Pageable pageable) {
+
+        Specification<User> specification = UserSpecification.getUserSpecification(
+                email,
+                roleName,
+                id,
+                createdAtStart,
+                createdAtEnd
+        );
+
+//        List<User> users = userRepository.findAll(specification);
+        Page<User> users = userRepository.findAllPagination(specification, pageable);
+        if (users.isEmpty()) {
+            Console.Error("User not found");
+            return DefaultResponse.notFound(request);
+        }
+        List<UserResponseDTO> res = users.stream()
+                .map(user -> new UserResponseDTO(
+                        user.getId(),
+                        user.getEmail(),
+                        user.getRole().getName(),
+                        user.getRole().getAccessPermissions().stream()
+                                .map(AccessPermission::getName)
+                                .collect(Collectors.toSet())
+                ))
+                .toList();
+        int totalPages = users.getTotalPages();
+        long totalItems = users.getTotalElements();
+        int currentPage = users.getNumber();
+        return DefaultResponse.foundWithPagination(
+                res,
+                request,
+                currentPage,
+                (int) totalItems,
+                totalPages
+        );
+    }
+
 
     public ResponseEntity<Object> logout(HttpServletRequest request) {
         try {

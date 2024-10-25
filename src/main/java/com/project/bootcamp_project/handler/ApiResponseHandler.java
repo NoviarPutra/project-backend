@@ -1,6 +1,7 @@
 package com.project.bootcamp_project.handler;
 
 import com.project.bootcamp_project.dto.response.ApiResponse;
+import com.project.bootcamp_project.dto.response.ApiResponsePagination;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,5 +41,31 @@ public class ApiResponseHandler {
                 responseData);
 
         return new ResponseEntity<>(response, headers, status);
+    }
+
+    public static ResponseEntity<Object> buildResponseWithPagination(String message,
+                                                                     HttpStatus status,
+                                                                     Object data,
+                                                                     int currentPage,
+                                                                     int totalItems,
+                                                                     int totalPages,
+                                                                     HttpServletRequest request) {
+        String statusText = status.isError() ? "Error" : "Success";
+        String path = null;
+        if (status.is4xxClientError() || status.is5xxServerError()) {
+            path = request.getRequestURI();
+        }
+
+        ApiResponsePagination response = new ApiResponsePagination(
+                statusText,
+                path,
+                message,
+                currentPage,
+                totalItems,
+                totalPages,
+                data
+        );
+
+        return new ResponseEntity<>(response, status);
     }
 }

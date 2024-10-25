@@ -133,5 +133,18 @@ public class GlobalExceptionHandler {
                 request);
     }
 
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<Object> handleNullPointerException(NullPointerException ex, HttpServletRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", "An unexpected null value was encountered.");
+
+        Console.Error("NullPointerException: " + ex.getMessage());
+        return ApiResponseHandler.buildResponse(
+                "KESALAHAN NILAI NULL",
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                errors,
+                request);
+    }
+
 
 }

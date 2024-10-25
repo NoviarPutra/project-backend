@@ -106,6 +106,20 @@ public class DefaultResponse {
                 request);
     }
 
+    public static ResponseEntity<Object> foundWithPagination(Object data,
+                                                             HttpServletRequest request,
+                                                             int currentPage,
+                                                             int totalItems,
+                                                             int totalPages) {
+        return ApiResponseHandler.buildResponseWithPagination("DATA BERHASIL DITEMUKAN",
+                HttpStatus.OK,
+                data,
+                currentPage,
+                totalItems,
+                totalPages,
+                request);
+    }
+
     public static ResponseEntity<Object> notFound(HttpServletRequest request) {
         return ApiResponseHandler.buildResponse("DATA TIDAK DITEMUKAN",
                 HttpStatus.NOT_FOUND,
