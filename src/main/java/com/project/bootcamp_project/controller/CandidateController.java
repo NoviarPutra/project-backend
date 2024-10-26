@@ -24,12 +24,7 @@ public class CandidateController {
 
     @PostMapping
     public ResponseEntity<Object> addCandidate(@Valid @RequestBody CreateCandidateDTO createCandidateDTO, HttpServletRequest request) {
-        Candidate candidate;
-        try {
-            candidate = candidateMapper.convertToEntity(createCandidateDTO);
-        } catch (EntityNotFoundException e) {
-            return DefaultResponse.notFound(request);
-        }
+        Candidate candidate = candidateMapper.convertToEntity(createCandidateDTO);
         return candidateService.save(candidate, request);
     }
 
