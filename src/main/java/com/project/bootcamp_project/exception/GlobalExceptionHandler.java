@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.modelmapper.MappingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -146,5 +147,21 @@ public class GlobalExceptionHandler {
                 request);
     }
 
+    @ExceptionHandler(MappingException.class)
+    public ResponseEntity<Object> handleMappingException(MappingException ex, HttpServletRequest request) {
+        Map<String, Object> errors = new HashMap<>();
+        Map<String, String> errorsDetails = new HashMap<>();
+        ex.getErrorMessages().forEach((errorMessage) -> {
+            errorsDetails.put("message", errorMessage.getCause().getMessage());
+        });
+        errors.put("error", errorsDetails);
+
+        Console.Error("MappingException: " + ex.getMessage());
+        return ApiResponseHandler.buildResponse(
+                "MAPPING DATA GAGAL",
+                HttpStatus.BAD_REQUEST,
+                errors,
+                request);
+    }
 
 }
