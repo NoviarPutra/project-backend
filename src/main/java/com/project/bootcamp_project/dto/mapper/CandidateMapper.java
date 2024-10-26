@@ -10,6 +10,8 @@ import com.project.bootcamp_project.repository.UserRepository;
 import com.project.bootcamp_project.util.Console;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,16 +39,11 @@ public class CandidateMapper {
     }
 
     private User getAuthenticatedUser() {
-        return userRepository.findAll().get(0);
-
-//        Perlu gunakan code dibawah apabila authentikasi jwtnya sudah berjalan
-
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        return userRepository.findByEmail((String) authentication.getPrincipal()).orElseThrow(() -> {
-//            Console.Log("User not found");
-//            return new EntityNotFoundException("User not found for email: " + authentication.getPrincipal());
-//        });
-
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userRepository.findByEmail((String) authentication.getPrincipal()).orElseThrow(() -> {
+            Console.Log("User not found");
+            return new EntityNotFoundException("User not found for email: " + authentication.getPrincipal());
+        });
     }
 
     private JobPosition getJobPositionById(String jobPositionId) {
