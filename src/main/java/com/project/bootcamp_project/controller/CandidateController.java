@@ -22,7 +22,7 @@ public class CandidateController {
     @Autowired
     private CandidateMapper candidateMapper;
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Object> addCandidate(@Valid @RequestBody CreateCandidateDTO createCandidateDTO, HttpServletRequest request) {
         Candidate candidate;
         try {
