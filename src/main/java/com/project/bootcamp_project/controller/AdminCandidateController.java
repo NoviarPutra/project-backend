@@ -1,9 +1,9 @@
 package com.project.bootcamp_project.controller;
 
 import com.project.bootcamp_project.dto.mapper.CandidateMapper;
-import com.project.bootcamp_project.dto.request.CreateCandidateDTO;
+import com.project.bootcamp_project.dto.request.AdminUpdateCandidateDTO;
 import com.project.bootcamp_project.entity.Candidate;
-import com.project.bootcamp_project.service.CandidateService;
+import com.project.bootcamp_project.service.AdminCandidateService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,22 +15,31 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/candidate")
-public class CandidateController {
+@RequestMapping("/api/admin/candidate")
+public class AdminCandidateController {
 
     @Autowired
-    private CandidateService candidateService;
+    private AdminCandidateService adminCandidateService;
 
     @Autowired
     private CandidateMapper candidateMapper;
 
-    @PostMapping
-    public ResponseEntity<Object> addCandidate(
-            @Valid @RequestBody CreateCandidateDTO createCandidateDTO,
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateCandidate(
+            @PathVariable UUID id,
+            @Valid @RequestBody AdminUpdateCandidateDTO adminUpdateCandidateDTO,
             HttpServletRequest request
     ) {
-        Candidate candidate = candidateMapper.convertToEntity(createCandidateDTO);
-        return candidateService.save(candidate, request);
+        Candidate candidate = candidateMapper.convertToEntity(adminUpdateCandidateDTO);
+        return adminCandidateService.update(id, candidate, request);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteCandidate(
+            @PathVariable UUID id,
+            HttpServletRequest request
+    ) {
+        return adminCandidateService.delete(id, request);
     }
 
     @GetMapping("/{id}")
@@ -38,7 +47,7 @@ public class CandidateController {
             @PathVariable UUID id,
             HttpServletRequest request
     ) {
-        return candidateService.findById(id, request);
+        return adminCandidateService.findById(id, request);
     }
 
     @GetMapping
@@ -48,7 +57,7 @@ public class CandidateController {
             HttpServletRequest request
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return candidateService.search(request, pageable);
+        return adminCandidateService.search(request, pageable);
     }
 
 }

@@ -99,6 +99,13 @@ public class DefaultResponse {
                 request);
     }
 
+    public static ResponseEntity<Object> failedDeleted(HttpServletRequest request) {
+        return ApiResponseHandler.buildResponse("DATA GAGAL DIHAPUS",
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                null,
+                request);
+    }
+
     public static ResponseEntity<Object> found(Object data, HttpServletRequest request) {
         return ApiResponseHandler.buildResponse("DATA BERHASIL DITEMUKAN",
                 HttpStatus.OK,

@@ -2,12 +2,12 @@ package com.project.bootcamp_project.dto.mapper;
 
 import com.project.bootcamp_project.dto.CandidateStatus;
 import com.project.bootcamp_project.dto.request.CreateCandidateDTO;
+import com.project.bootcamp_project.dto.request.AdminUpdateCandidateDTO;
 import com.project.bootcamp_project.entity.Candidate;
 import com.project.bootcamp_project.entity.JobPosition;
 import com.project.bootcamp_project.entity.User;
 import com.project.bootcamp_project.repository.JobPositionRespository;
 import com.project.bootcamp_project.repository.UserRepository;
-import com.project.bootcamp_project.util.Console;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.Converter;
@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @Component
 public class CandidateMapper {
@@ -60,6 +62,13 @@ public class CandidateMapper {
             mapper.map(src -> CandidateStatus.APPLIED, Candidate::setStatus);
         });
         return modelMapper.map(createCandidateDTO, Candidate.class);
+    }
+
+    public Candidate convertToEntity(AdminUpdateCandidateDTO adminUpdateCandidateDTO) {
+        modelMapper.typeMap(AdminUpdateCandidateDTO.class, Candidate.class).addMappings(mapper -> {
+            mapper.map(src -> CandidateStatus.valueOf(adminUpdateCandidateDTO.getStatus()), Candidate::setStatus);
+        });
+        return modelMapper.map(adminUpdateCandidateDTO, Candidate.class);
     }
 
 }
