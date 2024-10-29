@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.modelmapper.MappingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -19,6 +20,7 @@ import org.springframework.web.method.annotation.MethodArgumentConversionNotSupp
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -146,5 +148,20 @@ public class GlobalExceptionHandler {
                 request);
     }
 
+    @ExceptionHandler(MappingException.class)
+    public ResponseEntity<Object> handleMappingException(MappingException ex, HttpServletRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        String message = ex.getErrorMessages().stream()
+                .map(errorMessage -> errorMessage.getCause().getMessage())
+                .collect(Collectors.joining(", "));
+        errors.put("error", message);
+
+        Console.Error("MappingException: " + ex.getMessage());
+        return ApiResponseHandler.buildResponse(
+                "MAPPING DATA GAGAL",
+                HttpStatus.BAD_REQUEST,
+                errors,
+                request);
+    }
 
 }
