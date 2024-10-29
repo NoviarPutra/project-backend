@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -75,13 +73,9 @@ public class AdminInterviewScheduleService implements IService<InterviewSchedule
     @Override
     public ResponseEntity<Object> findById(UUID id, HttpServletRequest request) {
         Optional<InterviewSchedule> existingInterviewSchedule = interviewScheduleRepository.findById(id.toString());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = (String) authentication.getPrincipal();
         if (existingInterviewSchedule.isPresent()) {
-            if (existingInterviewSchedule.get().getUser().getEmail().equals(userEmail)) {
-                InterviewScheduleResponseDTO interviewScheduleResponse = modelMapper.map(existingInterviewSchedule.get(), InterviewScheduleResponseDTO.class);
-                return DefaultResponse.found(interviewScheduleResponse, request);
-            }
+            InterviewScheduleResponseDTO interviewScheduleResponse = modelMapper.map(existingInterviewSchedule.get(), InterviewScheduleResponseDTO.class);
+            return DefaultResponse.found(interviewScheduleResponse, request);
         }
         return DefaultResponse.notFound(request);
     }
