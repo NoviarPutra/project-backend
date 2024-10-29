@@ -3,10 +3,9 @@ package com.project.bootcamp_project.service;
 import com.project.bootcamp_project.core.IService;
 import com.project.bootcamp_project.dto.response.InterviewScheduleResponseDTO;
 import com.project.bootcamp_project.entity.InterviewSchedule;
-import com.project.bootcamp_project.entity.User;
 import com.project.bootcamp_project.handler.DefaultResponse;
 import com.project.bootcamp_project.repository.InterviewScheduleRepository;
-import com.project.bootcamp_project.repository.UserRepository;
+import com.project.bootcamp_project.util.Console;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,30 +21,55 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class InterviewScheduleService implements IService<InterviewSchedule> {
+public class AdminInterviewScheduleService implements IService<InterviewSchedule> {
 
     @Autowired
     private InterviewScheduleRepository interviewScheduleRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private ModelMapper modelMapper;
 
     @Override
     public ResponseEntity<Object> save(InterviewSchedule interviewSchedule, HttpServletRequest request) {
-        return null;
+        try {
+            interviewScheduleRepository.save(interviewSchedule);
+            Console.Log("InterviewSchedule saved successfully");
+            return DefaultResponse.saved(request);
+        } catch (Exception e) {
+            return DefaultResponse.failedSaved(request);
+        }
     }
 
     @Override
     public ResponseEntity<Object> update(UUID id, InterviewSchedule interviewSchedule, HttpServletRequest request) {
-        return null;
+        Optional<InterviewSchedule> existingInterviewSchedule = interviewScheduleRepository.findById(id.toString());
+        if (existingInterviewSchedule.isEmpty()) {
+            return DefaultResponse.notFound(request);
+        }
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+        modelMapper.map(interviewSchedule, existingInterviewSchedule.get());
+        try {
+            interviewScheduleRepository.save(existingInterviewSchedule.get());
+            Console.Log("InterviewSchedule saved successfully");
+            return DefaultResponse.saved(request);
+        } catch (Exception e) {
+            return DefaultResponse.failedSaved(request);
+        }
     }
 
     @Override
     public ResponseEntity<Object> delete(UUID id, HttpServletRequest request) {
-        return null;
+        Optional<InterviewSchedule> existingInterviewSchedule = interviewScheduleRepository.findById(id.toString());
+        if (existingInterviewSchedule.isEmpty()) {
+            return DefaultResponse.notFound(request);
+        }
+        try {
+            interviewScheduleRepository.delete(existingInterviewSchedule.get());
+            Console.Log("InterviewSchedule deleted successfully");
+            return DefaultResponse.deleted(request);
+        } catch (Exception e) {
+            return DefaultResponse.failedDeleted(request);
+        }
     }
 
     @Override
@@ -68,12 +92,7 @@ public class InterviewScheduleService implements IService<InterviewSchedule> {
     }
 
     public ResponseEntity<Object> search(HttpServletRequest request, Pageable pageable) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> existingUser = userRepository.findByEmail((String) authentication.getPrincipal());
-        if (existingUser.isEmpty()) {
-            return DefaultResponse.notFound(request);
-        }
-        Page<InterviewSchedule> interviewSchedulesPaginated = interviewScheduleRepository.findAllByUser(existingUser.get(), pageable);
+        Page<InterviewSchedule> interviewSchedulesPaginated = interviewScheduleRepository.findAll(pageable);
         List<InterviewScheduleResponseDTO> interviewSchedulesResponse = interviewSchedulesPaginated.getContent().stream()
                 .map(interviewSchedule -> modelMapper.map(interviewSchedule, InterviewScheduleResponseDTO.class))
                 .toList();

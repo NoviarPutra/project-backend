@@ -1,6 +1,7 @@
 package com.project.bootcamp_project.dto.mapper;
 
-import com.project.bootcamp_project.dto.request.CreateInterviewScheduleDTO;
+import com.project.bootcamp_project.dto.request.AdminCreateInterviewScheduleDTO;
+import com.project.bootcamp_project.dto.request.AdminUpdateInterviewScheduleDTO;
 import com.project.bootcamp_project.entity.Candidate;
 import com.project.bootcamp_project.entity.InterviewSchedule;
 import com.project.bootcamp_project.entity.User;
@@ -48,14 +49,24 @@ public class InterviewScheduleMapper {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-    public InterviewSchedule convertToEntity(CreateInterviewScheduleDTO createInterviewScheduleDTO) {
-        modelMapper.typeMap(CreateInterviewScheduleDTO.class, InterviewSchedule.class).addMappings(mapper -> {
-            mapper.using(candidateConverter).map(CreateInterviewScheduleDTO::getCandidateId, InterviewSchedule::setCandidate);
-            mapper.using(interviewerConverter).map(CreateInterviewScheduleDTO::getInterviewerId, InterviewSchedule::setUser);
-            mapper.map(CreateInterviewScheduleDTO::getScheduleTime, InterviewSchedule::setScheduleTime);
+    public InterviewSchedule convertToEntity(AdminCreateInterviewScheduleDTO adminCreateInterviewScheduleDTO) {
+        modelMapper.typeMap(AdminCreateInterviewScheduleDTO.class, InterviewSchedule.class).addMappings(mapper -> {
+            mapper.using(candidateConverter).map(AdminCreateInterviewScheduleDTO::getCandidateId, InterviewSchedule::setCandidate);
+            mapper.using(interviewerConverter).map(AdminCreateInterviewScheduleDTO::getInterviewerId, InterviewSchedule::setUser);
+            mapper.map(AdminCreateInterviewScheduleDTO::getScheduleTime, InterviewSchedule::setScheduleTime);
             mapper.skip(InterviewSchedule::setId);
         });
-        return modelMapper.map(createInterviewScheduleDTO, InterviewSchedule.class);
+        return modelMapper.map(adminCreateInterviewScheduleDTO, InterviewSchedule.class);
+    }
+
+    public InterviewSchedule convertToEntity(AdminUpdateInterviewScheduleDTO adminUpdateInterviewScheduleDTO) {
+        modelMapper.typeMap(AdminUpdateInterviewScheduleDTO.class, InterviewSchedule.class).addMappings(mapper -> {
+            mapper.using(candidateConverter).map(AdminUpdateInterviewScheduleDTO::getCandidateId, InterviewSchedule::setCandidate);
+            mapper.using(interviewerConverter).map(AdminUpdateInterviewScheduleDTO::getInterviewerId, InterviewSchedule::setUser);
+            mapper.map(AdminUpdateInterviewScheduleDTO::getScheduleTime, InterviewSchedule::setScheduleTime);
+            mapper.skip(InterviewSchedule::setId);
+        });
+        return modelMapper.map(adminUpdateInterviewScheduleDTO, InterviewSchedule.class);
     }
 
 }
