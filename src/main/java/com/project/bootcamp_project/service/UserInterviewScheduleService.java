@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class InterviewScheduleService implements IService<InterviewSchedule> {
+public class UserInterviewScheduleService implements IService<InterviewSchedule> {
 
     @Autowired
     private InterviewScheduleRepository interviewScheduleRepository;

@@ -1,6 +1,6 @@
 package com.project.bootcamp_project.controller;
 
-import com.project.bootcamp_project.service.InterviewScheduleService;
+import com.project.bootcamp_project.service.UserInterviewScheduleService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -15,14 +15,14 @@ import java.util.UUID;
 public class UserInterviewScheduleController {
 
     @Autowired
-    private InterviewScheduleService interviewScheduleService;
+    private UserInterviewScheduleService userInterviewScheduleService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getInterviewScheduleById(
             @PathVariable UUID id,
             HttpServletRequest request
     ) {
-        return interviewScheduleService.findById(id, request);
+        return userInterviewScheduleService.findById(id, request);
     }
 
     @GetMapping
@@ -32,7 +32,7 @@ public class UserInterviewScheduleController {
             HttpServletRequest request
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return interviewScheduleService.search(request, pageable);
+        return userInterviewScheduleService.search(request, pageable);
     }
 
 }
