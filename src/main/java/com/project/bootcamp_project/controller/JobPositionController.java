@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/job-position")
+@RequestMapping("/api/public/job-position")
 public class JobPositionController {
 
     @Autowired
