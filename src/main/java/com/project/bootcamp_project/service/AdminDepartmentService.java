@@ -5,7 +5,7 @@ import com.project.bootcamp_project.dto.response.DepartmentResponseDTO;
 import com.project.bootcamp_project.entity.Department;
 import com.project.bootcamp_project.handler.DefaultResponse;
 import com.project.bootcamp_project.repository.DepartmentRepository;
-import com.project.bootcamp_project.repository.UserRepository;
+import com.project.bootcamp_project.util.Console;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class DepartmentService implements IService<Department> {
+public class AdminDepartmentService implements IService<Department> {
 
     @Autowired
     private DepartmentRepository departmentRepository;
@@ -29,17 +29,45 @@ public class DepartmentService implements IService<Department> {
 
     @Override
     public ResponseEntity<Object> save(Department department, HttpServletRequest request) {
-        return null;
+        try {
+            departmentRepository.save(department);
+            Console.Log("Department saved successfully");
+            return DefaultResponse.saved(request);
+        } catch (Exception e) {
+            return DefaultResponse.failedSaved(request);
+        }
     }
 
     @Override
     public ResponseEntity<Object> update(UUID id, Department department, HttpServletRequest request) {
-        return null;
+        Optional<Department> existingDepartment = departmentRepository.findById(id.toString());
+        if (existingDepartment.isEmpty()) {
+            return DefaultResponse.notFound(request);
+        }
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+        modelMapper.map(department, existingDepartment.get());
+        try {
+            departmentRepository.save(existingDepartment.get());
+            Console.Log("Department saved successfully");
+            return DefaultResponse.saved(request);
+        } catch (Exception e) {
+            return DefaultResponse.failedSaved(request);
+        }
     }
 
     @Override
     public ResponseEntity<Object> delete(UUID id, HttpServletRequest request) {
-        return null;
+        Optional<Department> existingDepartment = departmentRepository.findById(id.toString());
+        if (existingDepartment.isEmpty()) {
+            return DefaultResponse.notFound(request);
+        }
+        try {
+            departmentRepository.delete(existingDepartment.get());
+            Console.Log("Department deleted successfully");
+            return DefaultResponse.deleted(request);
+        } catch (Exception e) {
+            return DefaultResponse.failedDeleted(request);
+        }
     }
 
     @Override

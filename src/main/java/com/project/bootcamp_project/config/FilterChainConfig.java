@@ -29,7 +29,7 @@ public class FilterChainConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/register", "/api/auth/**", "/api/department").permitAll()
+                        .requestMatchers("/api/register", "/api/auth/**", "/api/public/**").permitAll()
                         .requestMatchers("/api/users/**", "/api/department/add").authenticated()
                         .anyRequest().authenticated())
                 .httpBasic(basic -> basic.authenticationEntryPoint(authenticationEntryPoint))
