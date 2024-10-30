@@ -1,7 +1,7 @@
 package com.project.bootcamp_project.dto.mapper;
 
 import com.project.bootcamp_project.dto.CandidateStatus;
-import com.project.bootcamp_project.dto.request.CreateCandidateDTO;
+import com.project.bootcamp_project.dto.request.UserCreateCandidateDTO;
 import com.project.bootcamp_project.dto.request.AdminUpdateCandidateDTO;
 import com.project.bootcamp_project.entity.Candidate;
 import com.project.bootcamp_project.entity.JobPosition;
@@ -18,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 @Component
 public class CandidateMapper {
@@ -54,14 +52,14 @@ public class CandidateMapper {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-    public Candidate convertToEntity(CreateCandidateDTO createCandidateDTO) {
-        modelMapper.typeMap(CreateCandidateDTO.class, Candidate.class).addMappings(mapper -> {
-            mapper.using(jobPositionConverter).map(CreateCandidateDTO::getJobPositionId, Candidate::setJobPosition);
+    public Candidate convertToEntity(UserCreateCandidateDTO userCreateCandidateDTO) {
+        modelMapper.typeMap(UserCreateCandidateDTO.class, Candidate.class).addMappings(mapper -> {
+            mapper.using(jobPositionConverter).map(UserCreateCandidateDTO::getJobPositionId, Candidate::setJobPosition);
             mapper.using(userConverter).map(source -> null, Candidate::setUser);
-            mapper.map(CreateCandidateDTO::getResume, Candidate::setResume);
+            mapper.map(UserCreateCandidateDTO::getResume, Candidate::setResume);
             mapper.map(src -> CandidateStatus.APPLIED, Candidate::setStatus);
         });
-        return modelMapper.map(createCandidateDTO, Candidate.class);
+        return modelMapper.map(userCreateCandidateDTO, Candidate.class);
     }
 
     public Candidate convertToEntity(AdminUpdateCandidateDTO adminUpdateCandidateDTO) {

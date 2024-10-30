@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class CandidateService implements IService<Candidate> {
+public class UserCandidateService implements IService<Candidate> {
 
     @Autowired
     private CandidateRepository candidateRepository;

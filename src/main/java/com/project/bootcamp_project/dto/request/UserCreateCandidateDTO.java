@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
-public class CreateCandidateDTO {
+public class UserCreateCandidateDTO {
 
     @NotNull
     @NotEmpty
@@ -44,7 +44,7 @@ public class CreateCandidateDTO {
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        CreateCandidateDTO that = (CreateCandidateDTO) object;
+        UserCreateCandidateDTO that = (UserCreateCandidateDTO) object;
         return Objects.equals(jobPositionId, that.jobPositionId) && Objects.equals(resume, that.resume);
     }
 

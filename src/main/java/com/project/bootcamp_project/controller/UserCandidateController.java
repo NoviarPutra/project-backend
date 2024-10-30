@@ -1,9 +1,9 @@
 package com.project.bootcamp_project.controller;
 
 import com.project.bootcamp_project.dto.mapper.CandidateMapper;
-import com.project.bootcamp_project.dto.request.CreateCandidateDTO;
+import com.project.bootcamp_project.dto.request.UserCreateCandidateDTO;
 import com.project.bootcamp_project.entity.Candidate;
-import com.project.bootcamp_project.service.CandidateService;
+import com.project.bootcamp_project.service.UserCandidateService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,22 +15,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/candidate")
-public class CandidateController {
+@RequestMapping("/api/user/candidate")
+public class UserCandidateController {
 
     @Autowired
-    private CandidateService candidateService;
+    private UserCandidateService userCandidateService;
 
     @Autowired
     private CandidateMapper candidateMapper;
 
     @PostMapping
     public ResponseEntity<Object> addCandidate(
-            @Valid @RequestBody CreateCandidateDTO createCandidateDTO,
+            @Valid @RequestBody UserCreateCandidateDTO userCreateCandidateDTO,
             HttpServletRequest request
     ) {
-        Candidate candidate = candidateMapper.convertToEntity(createCandidateDTO);
-        return candidateService.save(candidate, request);
+        Candidate candidate = candidateMapper.convertToEntity(userCreateCandidateDTO);
+        return userCandidateService.save(candidate, request);
     }
 
     @GetMapping("/{id}")
@@ -38,7 +38,7 @@ public class CandidateController {
             @PathVariable UUID id,
             HttpServletRequest request
     ) {
-        return candidateService.findById(id, request);
+        return userCandidateService.findById(id, request);
     }
 
     @GetMapping
@@ -48,7 +48,7 @@ public class CandidateController {
             HttpServletRequest request
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return candidateService.search(request, pageable);
+        return userCandidateService.search(request, pageable);
     }
 
 }
