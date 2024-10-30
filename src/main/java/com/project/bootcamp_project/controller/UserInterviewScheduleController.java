@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/interview-schedule")
-public class InterviewScheduleController {
+@RequestMapping("/api/user/interview-schedule")
+public class UserInterviewScheduleController {
 
     @Autowired
     private InterviewScheduleService interviewScheduleService;
