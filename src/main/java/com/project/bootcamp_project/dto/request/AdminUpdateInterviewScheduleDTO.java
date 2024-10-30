@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class CreateInterviewScheduleDTO {
+public class AdminUpdateInterviewScheduleDTO {
 
     @NotNull
     @NotEmpty
@@ -45,7 +45,7 @@ public class CreateInterviewScheduleDTO {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("CreateInterviewScheduleDTO{");
+        final StringBuffer sb = new StringBuffer("AdminUpdateInterviewScheduleDTO{");
         sb.append("candidateId='").append(candidateId).append('\'');
         sb.append(", interviewerId='").append(interviewerId).append('\'');
         sb.append(", scheduleTime=").append(scheduleTime);
@@ -57,7 +57,7 @@ public class CreateInterviewScheduleDTO {
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        CreateInterviewScheduleDTO that = (CreateInterviewScheduleDTO) object;
+        AdminUpdateInterviewScheduleDTO that = (AdminUpdateInterviewScheduleDTO) object;
         return Objects.equals(candidateId, that.candidateId) && Objects.equals(interviewerId, that.interviewerId) && Objects.equals(scheduleTime, that.scheduleTime);
     }
 
@@ -65,5 +65,4 @@ public class CreateInterviewScheduleDTO {
     public int hashCode() {
         return Objects.hash(candidateId, interviewerId, scheduleTime);
     }
-
 }
