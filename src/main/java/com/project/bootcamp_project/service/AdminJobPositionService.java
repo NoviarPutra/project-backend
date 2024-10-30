@@ -5,6 +5,7 @@ import com.project.bootcamp_project.dto.response.JobPositionResponseDTO;
 import com.project.bootcamp_project.entity.JobPosition;
 import com.project.bootcamp_project.handler.DefaultResponse;
 import com.project.bootcamp_project.repository.JobPositionRepository;
+import com.project.bootcamp_project.util.Console;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class JobPositionService implements IService<JobPosition> {
+public class AdminJobPositionService implements IService<JobPosition> {
 
     @Autowired
     private JobPositionRepository jobPositionRepository;
@@ -28,17 +29,46 @@ public class JobPositionService implements IService<JobPosition> {
 
     @Override
     public ResponseEntity<Object> save(JobPosition jobPosition, HttpServletRequest request) {
-        return null;
+        try {
+            jobPositionRepository.save(jobPosition);
+            Console.Log("JobPosition saved successfully");
+            return DefaultResponse.saved(request);
+        } catch (Exception e) {
+            return DefaultResponse.failedSaved(request);
+        }
     }
 
     @Override
     public ResponseEntity<Object> update(UUID id, JobPosition jobPosition, HttpServletRequest request) {
-        return null;
+        Optional<JobPosition> existingJobPosition = jobPositionRepository.findById(id.toString());
+        if (existingJobPosition.isEmpty()) {
+            return DefaultResponse.notFound(request);
+        }
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+        modelMapper.map(jobPosition, existingJobPosition.get());
+        try {
+            jobPositionRepository.save(existingJobPosition.get());
+            Console.Log("JobPosition saved successfully");
+            return DefaultResponse.saved(request);
+        } catch (Exception e) {
+            Console.Log(e.getMessage());
+            return DefaultResponse.failedSaved(request);
+        }
     }
 
     @Override
     public ResponseEntity<Object> delete(UUID id, HttpServletRequest request) {
-        return null;
+        Optional<JobPosition> existingJobPosition = jobPositionRepository.findById(id.toString());
+        if (existingJobPosition.isEmpty()) {
+            return DefaultResponse.notFound(request);
+        }
+        try {
+            jobPositionRepository.delete(existingJobPosition.get());
+            Console.Log("JobPosition deleted successfully");
+            return DefaultResponse.deleted(request);
+        } catch (Exception e) {
+            return DefaultResponse.failedDeleted(request);
+        }
     }
 
     @Override

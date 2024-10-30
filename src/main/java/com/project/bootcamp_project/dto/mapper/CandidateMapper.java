@@ -6,7 +6,7 @@ import com.project.bootcamp_project.dto.request.AdminUpdateCandidateDTO;
 import com.project.bootcamp_project.entity.Candidate;
 import com.project.bootcamp_project.entity.JobPosition;
 import com.project.bootcamp_project.entity.User;
-import com.project.bootcamp_project.repository.JobPositionRespository;
+import com.project.bootcamp_project.repository.JobPositionRepository;
 import com.project.bootcamp_project.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,7 +26,7 @@ public class CandidateMapper {
     private ModelMapper modelMapper;
 
     @Autowired
-    private JobPositionRespository jobPositionRepository;
+    private JobPositionRepository jobPositionRepository;
 
     @Autowired
     private UserRepository userRepository;
