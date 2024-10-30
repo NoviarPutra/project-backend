@@ -1,13 +1,13 @@
 package com.project.bootcamp_project.dto.mapper;
 
 import com.project.bootcamp_project.dto.CandidateStatus;
-import com.project.bootcamp_project.dto.request.CreateCandidateDTO;
+import com.project.bootcamp_project.dto.request.UserCreateCandidateDTO;
+import com.project.bootcamp_project.dto.request.AdminUpdateCandidateDTO;
 import com.project.bootcamp_project.entity.Candidate;
 import com.project.bootcamp_project.entity.JobPosition;
 import com.project.bootcamp_project.entity.User;
 import com.project.bootcamp_project.repository.JobPositionRespository;
 import com.project.bootcamp_project.repository.UserRepository;
-import com.project.bootcamp_project.util.Console;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.Converter;
@@ -52,14 +52,21 @@ public class CandidateMapper {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-    public Candidate convertToEntity(CreateCandidateDTO createCandidateDTO) {
-        modelMapper.typeMap(CreateCandidateDTO.class, Candidate.class).addMappings(mapper -> {
-            mapper.using(jobPositionConverter).map(CreateCandidateDTO::getJobPositionId, Candidate::setJobPosition);
+    public Candidate convertToEntity(UserCreateCandidateDTO userCreateCandidateDTO) {
+        modelMapper.typeMap(UserCreateCandidateDTO.class, Candidate.class).addMappings(mapper -> {
+            mapper.using(jobPositionConverter).map(UserCreateCandidateDTO::getJobPositionId, Candidate::setJobPosition);
             mapper.using(userConverter).map(source -> null, Candidate::setUser);
-            mapper.map(CreateCandidateDTO::getResume, Candidate::setResume);
+            mapper.map(UserCreateCandidateDTO::getResume, Candidate::setResume);
             mapper.map(src -> CandidateStatus.APPLIED, Candidate::setStatus);
         });
-        return modelMapper.map(createCandidateDTO, Candidate.class);
+        return modelMapper.map(userCreateCandidateDTO, Candidate.class);
+    }
+
+    public Candidate convertToEntity(AdminUpdateCandidateDTO adminUpdateCandidateDTO) {
+        modelMapper.typeMap(AdminUpdateCandidateDTO.class, Candidate.class).addMappings(mapper -> {
+            mapper.map(src -> CandidateStatus.valueOf(adminUpdateCandidateDTO.getStatus()), Candidate::setStatus);
+        });
+        return modelMapper.map(adminUpdateCandidateDTO, Candidate.class);
     }
 
 }
