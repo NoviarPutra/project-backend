@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/department")
+@RequestMapping("/api/public/department")
 public class DepartmentController {
 
     @Autowired
